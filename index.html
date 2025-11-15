@@ -152,12 +152,12 @@
             </svg>
             
             <!-- 
-              PERUBAHAN:
-              Padding atas (pt-8 sm:pt-12) dikurangi menjadi (pt-4 sm:pt-6)
-              agar teks berada lebih tinggi.
+              PERUBAHAN: 
+              Font size diubah dari 'text-2xl sm:text-3xl'
+              menjadi 'text-lg sm:text-xl'
             -->
             <div class="absolute inset-0 flex items-start justify-center p-4 pt-4 sm:pt-6">
-                <h5 class="text-white text-2xl sm:text-3xl font-bold font-serif text-center" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Selamat Datang di MalkaJurnal</h5>
+                <h2 class="text-white text-lg sm:text-xl font-bold font-serif text-center" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Selamat Datang di MalkaJurnal</h2>
             </div>
         </div>
 
@@ -182,11 +182,15 @@
 
             <!-- Tombol 2: Daftar Hadir Upacara -->
             <a href="https://docs.google.com/forms/d/e/1FAIpQLScckW2GX_bx50DRKZFLja0VNxXelKx2QhevtFqE9ZGGyBKCqg/viewform" target="_blank" rel="noopener noreferrer" class="shortcut-card group">
-                <!-- Ikon: Standar Panji (Banner) -->
+                <!-- Ikon Bendera Merah Putih -->
                 <svg class="w-16 h-16 sm:w-20 sm:h-20" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Tiang (Emas) -->
                     <rect class="svg-icon-accent" x="12" y="5" width="4" height="54" rx="2" fill="#FFD700"/>
-                    <path class="svg-icon-primary" d="M16 10 H 48 V 30 L 32 24 L 16 30 Z" fill="#0A4D68"/>
-                    <path class="svg-icon-secondary" d="M16 30 H 48 V 50 L 32 44 L 16 50 Z" fill="#D0FFF0"/>
+                    <!-- Bagian Merah -->
+                    <path d="M16 10 H 48 V 30 L 32 24 L 16 30 Z" fill="#DC2626"/> <!-- Merah (Tailwind Red 600) -->
+                    <!-- Bagian Putih (dengan stroke agar terlihat) -->
+                    <path d="M16 30 H 48 V 50 L 32 44 L 16 50 Z" fill="#FFFFFF" stroke="#D1D5DB" stroke-width="1"/>
+                    <!-- Ujung Tiang (Emas) -->
                     <circle class="svg-icon-accent" cx="14" cy="5" r="3" fill="#FFD700"/>
                     <circle class="svg-icon-accent" cx="14" cy="59" r="3" fill="#FFD700"/>
                 </svg>
