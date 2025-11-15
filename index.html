@@ -38,9 +38,12 @@
             background-image: linear-gradient(180deg, #b1fff8 0%, #D0FFF0 100%);
         }
 
-        /* Styling untuk kartu tombol pintasan */
+        /* PERUBAHAN: 
+          'bg-white' telah DIHAPUS dari sini, dan akan ditambahkan
+          secara individual ke setiap kartu di HTML.
+        */
         .shortcut-card {
-            @apply bg-white rounded-2xl shadow-lg p-4 sm:p-6 flex flex-col items-center justify-center text-center transition-all duration-300 transform hover:shadow-xl hover:-translate-y-1;
+            @apply rounded-2xl shadow-lg p-4 sm:p-6 flex flex-col items-center justify-center text-center transition-all duration-300 transform hover:shadow-2xl hover:-translate-y-1 hover:shadow-cyan-500/30;
             border: 1px solid rgba(0, 0, 0, 0.05);
             @apply focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2;
         }
@@ -151,11 +154,7 @@
                 <circle cx="200" cy="75" r="8" fill="#D0FFF0"/>
             </svg>
             
-            <!-- 
-              PERUBAHAN: 
-              Font size diubah dari 'text-2xl sm:text-3xl'
-              menjadi 'text-lg sm:text-xl'
-            -->
+            <!-- Teks Hero -->
             <div class="absolute inset-0 flex items-start justify-center p-4 pt-4 sm:pt-6">
                 <h2 class="text-white text-lg sm:text-xl font-bold font-serif text-center" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Selamat Datang di MalkaJurnal</h2>
             </div>
@@ -163,12 +162,11 @@
 
         <!-- 
           Grid Tombol Pintasan 
-          (Kelas 'relative' ditambahkan di sini untuk memperbaiki bug klik)
         -->
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6 relative">
 
             <!-- Tombol 1: Jurnal Mengajar -->
-            <a href="https://docs.google.com/forms/u/0/d/e/1FAIpQLSdPCgVx3VYgllWbjy9E2lnJF5ukQ92l0sisODuhuRHV_Hzg6Q/viewform?usp=send_form&pli=1&authuser=0" target="_blank" rel="noopener noreferrer" class="shortcut-card group">
+            <a href="https://docs.google.com/forms/u/0/d/e/1FAIpQLSdPCgVx3VYgllWbjy9E2lnJF5ukQ92l0sisODuhuRHV_Hzg6Q/viewform?usp=send_form&pli=1&authuser=0" target="_blank" rel="noopener noreferrer" class="shortcut-card group bg-white">
                 <!-- Ikon: Buku Jurnal Kuno (Tome) dan Pena Bulu (Quill) -->
                 <svg class="w-16 h-16 sm:w-20 sm:h-20" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
                     <path class="svg-icon-primary" d="M14,56V8c0-1.1,0.9-2,2-2h30c1.1,0,2,0.9,2,2v48l-17-10L14,56z" fill="#0A4D68"/>
@@ -181,7 +179,7 @@
             </a>
 
             <!-- Tombol 2: Daftar Hadir Upacara -->
-            <a href="https://docs.google.com/forms/d/e/1FAIpQLScckW2GX_bx50DRKZFLja0VNxXelKx2QhevtFqE9ZGGyBKCqg/viewform" target="_blank" rel="noopener noreferrer" class="shortcut-card group">
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLScckW2GX_bx50DRKZFLja0VNxXelKx2QhevtFqE9ZGGyBKCqg/viewform" target="_blank" rel="noopener noreferrer" class="shortcut-card group bg-cyan-50">
                 <!-- Ikon Bendera Merah Putih -->
                 <svg class="w-16 h-16 sm:w-20 sm:h-20" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
                     <!-- Tiang (Emas) -->
@@ -198,7 +196,7 @@
             </a>
 
             <!-- Tombol 3: Yasin Morning -->
-            <a href="https://docs.google.com/forms/d/e/1FAIpQLSddRWmO1Belgu6nNqNp4CcLjDLgywEsTyecLzIt0WgeSFSuKQ/viewform" target="_blank" rel="noopener noreferrer" class="shortcut-card group">
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSddRWmO1Belgu6nNqNp4CcLjDLgywEsTyecLzIt0WgeSFSuKQ/viewform" target="_blank" rel="noopener noreferrer" class="shortcut-card group bg-teal-50">
                 <!-- Ikon: Kitab Suci di Rehal -->
                 <svg class="w-16 h-16 sm:w-20 sm:h-20" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
                     <!-- Rehal (Tatakan) -->
@@ -213,7 +211,7 @@
             </a>
 
             <!-- Tombol 4: Rekap Jurnal Guru -->
-            <a href="https://lookerstudio.google.com/embed/reporting/5229a8e6-7d59-458e-bf46-5e45250633f8/page/xzTXF" target="_blank" rel="noopener noreferrer" class="shortcut-card group">
+            <a href="https://lookerstudio.google.com/embed/reporting/5229a8e6-7d59-458e-bf46-5e45250633f8/page/xzTXF" target="_blank" rel="noopener noreferrer" class="shortcut-card group bg-white">
                 <!-- Ikon: Bola Kristal (Orb) -->
                 <svg class="w-16 h-16 sm:w-20 sm:h-20" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
                     <path d="M 22 55 C 20 50, 20 45, 24 45 L 40 45 C 44 45, 44 50, 42 55 Z" fill="#8b5a2b"/> <!-- Stand -->
@@ -236,7 +234,7 @@
             </a>
 
             <!-- Tombol 5: Rekap Upacara -->
-            <a href="https://lookerstudio.google.com/u/0/reporting/9e33f38f-ee8d-429d-9e4c-176af3a520af" target="_blank" rel="noopener noreferrer" class="shortcut-card group">
+            <a href="https://lookerstudio.google.com/u/0/reporting/9e33f38f-ee8d-429d-9e4c-176af3a520af" target="_blank" rel="noopener noreferrer" class="shortcut-card group bg-cyan-50">
                 <!-- Ikon: Piala Kemenangan (Trophy) -->
                 <svg class="w-16 h-16 sm:w-20 sm:h-20" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
                     <path class="svg-icon-accent" d="M18 10 C 18 20, 14 25, 14 30 V 40 H 50 V 30 C 50 25, 46 20, 46 10 H 18 Z" fill="#FFD700"/>
@@ -248,7 +246,7 @@
             </a>
 
             <!-- Tombol 6: Rekap Yasin Morning -->
-            <a href="https://lookerstudio.google.com/u/0/reporting/9e33f38f-ee8d-429d-9e4c-176af3a520af" target="_blank" rel="noopener noreferrer" class="shortcut-card group">
+            <a href="https://lookerstudio.google.com/u/0/reporting/9e33f38f-ee8d-429d-9e4c-176af3a520af" target="_blank" rel="noopener noreferrer" class="shortcut-card group bg-teal-50">
                 <!-- Ikon: Gulungan Naskah (Scrolls) -->
                 <svg class="w-16 h-16 sm:w-20 sm:h-20" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
                     <!-- Gulungan 1 (depan) -->
