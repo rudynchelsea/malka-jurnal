@@ -11,10 +11,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Merriweather:wght@700&display=swap" rel="stylesheet">
     
-    <!-- Memuat Firebase SDK (v9 Compat) -->
+    <!-- SDK Firebase (Diperlukan untuk Autentikasi) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
-
+    
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -48,6 +48,16 @@
             --tw-shadow: var(--tw-shadow-colored);
         }
 
+        .shortcut-card:focus {
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+            --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+            --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+            box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+            --tw-ring-color: rgb(6 182 212);
+            --tw-ring-offset-width: 2px;
+        }
+
         @media (min-width: 640px) { .shortcut-card { padding: 1.5rem; } }
 
         .shortcut-card h3 {
@@ -67,37 +77,72 @@
         #main-menu { padding-top: 72px; }
         
         .page-embed {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            z-index: 20; display: flex; flex-direction: column;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
             background-image: linear-gradient(180deg, #b1fff8 0%, #D0FFF0 100%);
         }
+
         .page-embed-header {
             background-image: linear-gradient(to right, rgb(13 148 136), rgb(8 145 178));
             box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-            padding: 1rem; display: flex; justify-content: space-between;
-            align-items: center; flex-shrink: 0;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
         }
+        
         .page-embed-content {
-            display: flex; flex-grow: 1; overflow: auto;
-            justify-content: center; align-items: center; padding: 0;
+            display: flex;
+            flex-grow: 1;
+            overflow: auto;
+            justify-content: center;
+            align-items: center;
+            padding: 0;
         }
-        @media (min-width: 768px) { .page-embed-content:not(.content-full-width) { padding: 1.5rem; } }
+        
+        @media (min-width: 768px) {
+            .page-embed-content:not(.content-full-width) {
+                padding: 1.5rem;
+            }
+        }
 
         .iframe-9-16-wrapper {
-            width: 100%; height: 100%; border: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
         }
         @media (min-width: 768px) {
             .iframe-9-16-wrapper {
-                width: auto; height: auto; max-width: 24rem; 
-                aspect-ratio: 9 / 16; border-radius: 1rem;
+                width: auto;
+                height: auto;
+                max-width: 24rem; 
+                aspect-ratio: 9 / 16;
+                border-radius: 1rem;
                 box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
-                overflow: hidden; max-height: 90vh;
+                overflow: hidden;
+                max-height: 90vh;
             }
         }
+
         .page-embed iframe {
-            width: 100%; height: 100%; border-width: 0;
+            width: 100%;
+            height: 100%;
+            border-width: 0;
         }
-        @media (min-width: 768px) { .iframe-9-16-wrapper iframe { border-radius: 1rem; } }
+        
+        @media (min-width: 768px) {
+            .iframe-9-16-wrapper iframe {
+                border-radius: 1rem;
+            }
+        }
+
+        .btn-kembali {
+             /* Stylings (diterapkan via JS/Tailwind) */
+        }
 
         @keyframes floatCloud {
           0%, 100% { transform: translateX(0); } 50% { transform: translateX(10px); }
@@ -115,76 +160,63 @@
           -webkit-background-clip: text; -webkit-text-fill-color: transparent;
           background-clip: text; text-fill-color: transparent;
         }
-        
-        #loader {
-          border: 4px solid #f3f3f3;
-          border-top: 4px solid #0A4D68;
-          border-radius: 50%;
-          width: 40px;
-          height: 40px;
-          animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
     </style>
 </head>
 <body class="antialiased text-gray-900">
 
-    <!-- Halaman Login -->
-    <div id="login-page" class="flex flex-col items-center justify-center min-h-screen p-4">
-        <div class="w-full max-w-sm text-center">
-            
+    <!-- ============================================== -->
+    <!--      HALAMAN LOGIN (BARU)                      -->
+    <!-- ============================================== -->
+    <div id="login-page" class="fixed inset-0 z-50 flex flex-col items-center justify-center p-8">
+        <div class="bg-white/70 backdrop-blur-md p-8 sm:p-12 rounded-2xl shadow-2xl text-center max-w-sm w-full">
             <img src="https://smkn1plosoklaten.sch.id/img/logo-smk.png" alt="Logo SMKN 1 Plosoklaten" class="h-20 w-auto mx-auto mb-4">
-            
-            <h1 class="text-3xl font-bold font-serif text-gradient-gold" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.2); background-image: linear-gradient(to right, #0A4D68 0%, #086a8b 50%, #0A4D68 100%);">
+            <h1 class="text-2xl sm:text-3xl font-bold tracking-wide font-serif text-gradient-gold mb-2" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.1); background-image: linear-gradient(to right, #0A4D68 0%, #086a8b 50%, #0A4D68 100%);">
                 MALKA JURNAL
             </h1>
-            <p class="text-cyan-800 mt-2 mb-8">Silakan login untuk melanjutkan</p>
+            <p class="text-gray-600 mb-8">Silakan login untuk melanjutkan.</p>
 
-            <button id="btn-login" class="w-full bg-white shadow-lg rounded-lg px-6 py-3 flex items-center justify-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                <svg class="w-6 h-6 mr-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48px" height="48px"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12s5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24s8.955,20,20,20s20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.222,0-9.619-3.317-11.28-7.962l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.088,5.574l6.19,5.238C39.912,35.533,44,29.898,44,24C44,22.659,43.862,21.35,43.611,20.083z"/></svg>
-                <span class="font-semibold text-gray-700">Login dengan Google</span>
+            <button id="btn-google-login" class="w-full bg-white text-gray-700 font-semibold py-3 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center space-x-3 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2">
+                <!-- SVG Ikon Google -->
+                <svg class="w-6 h-6" viewBox="0 0 48 48">
+                    <path fill="#4285F4" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
+                    <path fill="#34A853" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v8.51h12.8c-.57 2.73-2.24 5.08-4.79 6.69l7.98 6.19c4.63-4.26 7.27-10.3 7.27-17.01z"></path>
+                    <path fill="#FBBC05" d="M10.53 28.59c-.49-1.45-.78-2.99-.78-4.59s.29-3.14.78-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
+                    <path fill="#EA4335" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.98-6.19c-2.11 1.43-4.79 2.2-7.91 2.2-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
+                    <path fill="none" d="M0 0h48v48H0z"></path>
+                </svg>
+                <span>Sign in with Google</span>
             </button>
-            
-            <div id="loader" class="hidden mx-auto mt-8"></div>
+            <p id="login-error" class="text-red-500 text-sm mt-4"></p>
         </div>
     </div>
 
-    <!-- Konten Aplikasi Utama (Tersembunyi Awal) -->
+
+    <!-- ============================================== -->
+    <!--    KONTEN APLIKASI UTAMA (Disembunyikan)       -->
+    <!-- ============================================== -->
     <div id="app-container" class="hidden">
 
         <!-- Header Utama -->
         <header class="bg-gradient-to-r from-teal-600 to-cyan-700 shadow-lg p-4 fixed top-0 left-0 right-0 z-10">
             <div class="container mx-auto max-w-5xl flex justify-between items-center">
-                
                 <img src="https://smkn1plosoklaten.sch.id/img/logo-smk.png" alt="Logo SMKN 1 Plosoklaten" class="h-10 w-auto">
                 <h1 class="text-xl sm:text-2xl font-bold tracking-wide font-serif text-gradient-gold" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.2);">
                     MALKA JURNAL
                 </h1>
 
-                <!-- Info User (Dropdown Sederhana) -->
-                <div class="relative group">
-                    <img id="user-profile-pic" src="" alt="Foto Profil" class="h-10 w-10 rounded-full cursor-pointer border-2 border-white shadow-md">
-                    <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl z-20 overflow-hidden hidden group-hover:block transition-all duration-300 opacity-0 group-hover:opacity-100 transform scale-95 group-hover:scale-100">
-                        <div class="p-4">
-                            <p class="font-semibold text-gray-800 text-sm">Selamat datang,</p>
-                            <p id="user-name" class="font-bold text-gray-900 truncate"></p>
-                        </div>
-                        <div class="border-t border-gray-100"></div>
-                        <button id="btn-sign-out" class="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-gray-100 flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                            </svg>
-                            Sign Out
-                        </button>
-                    </div>
+                <div class="flex items-center space-x-3">
+                    <img id="user-photo" src="" alt="Foto Profil" class="h-10 w-10 rounded-full border-2 border-white/50 object-cover">
+                    <button id="btn-sign-out" class="text-white text-sm font-semibold bg-red-500/80 hover:bg-red-600 px-3 py-1.5 rounded-lg transition-colors">
+                        Sign Out
+                    </button>
                 </div>
+
             </div>
         </header>
 
-        <!-- Menu Utama (Dashboard) -->
+        <!-- ============================================== -->
+        <!--      BAGIAN 1: MENU UTAMA (DASHBOARD)          -->
+        <!-- ============================================== -->
         <div id="main-menu">
             <main class="container mx-auto max-w-5xl p-4 sm:p-6">
                 <!-- Hero Section -->
@@ -246,7 +278,12 @@
                             <rect x="28" y="25" width="4" height="15" fill="#D0FFF0" rx="1"/>
                             <rect x="34" y="28" width="4" height="12" fill="#D0FFF0" rx="1"/>
                             <rect x="40" y="32" width="4" height="8" fill="#D0FFF0" rx="1"/>
-                            <defs><radialGradient id="grad"><stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.3"/><stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/></radialGradient></defs>
+                            <defs>
+                                <radialGradient id="grad">
+                                    <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.3"/>
+                                    <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+                                </radialGradient>
+                            </defs>
                         </svg>
                         <h3>Rekap Jurnal Guru</h3>
                     </button>
@@ -280,56 +317,104 @@
             </footer>
         </div>
 
-        <!-- Halaman-Halaman Embed -->
+        <!-- ============================================== -->
+        <!--     BAGIAN 2: HALAMAN-HALAMAN EMBED            -->
+        <!-- ============================================== -->
+        
         <div id="page-jurnal" class="page-embed hidden">
             <div class="page-embed-header">
-                <button class="btn-kembali p-2 rounded-full text-white hover:bg-cyan-600 transition-colors" aria-label="Kembali"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg></button>
-                <h2 class="text-lg font-bold text-white">Jurnal Mengajar</h2><div class="w-10"></div>
+                <button class="btn-kembali p-2 rounded-full text-white hover:bg-cyan-600 transition-colors" aria-label="Kembali">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                </button>
+                <h2 class="text-lg font-bold text-white">Jurnal Mengajar</h2>
+                <div class="w-10"></div>
             </div>
-            <div class="page-embed-content"><div class="iframe-9-16-wrapper"><iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdPCgVx3VYgllWbjy9E2lnJF5ukQ92l0sisODuhuRHV_Hzg6Q/viewform?embedded=true" frameborder="0">Memuat…</iframe></div></div>
+            <div class="page-embed-content">
+                <div class="iframe-9-16-wrapper">
+                    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdPCgVx3VYgllWbjy9E2lnJF5ukQ92l0sisODuhuRHV_Hzg6Q/viewform?embedded=true" frameborder="0">Memuat…</iframe>
+                </div>
+            </div>
         </div>
+
         <div id="page-upacara" class="page-embed hidden">
             <div class="page-embed-header">
-                <button class="btn-kembali p-2 rounded-full text-white hover:bg-cyan-600 transition-colors" aria-label="Kembali"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg></button>
-                <h2 class="text-lg font-bold text-white">Daftar Hadir Upacara</h2><div class="w-10"></div>
+                <button class="btn-kembali p-2 rounded-full text-white hover:bg-cyan-600 transition-colors" aria-label="Kembali">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                </button>
+                <h2 class="text-lg font-bold text-white">Daftar Hadir Upacara</h2>
+                <div class="w-10"></div>
             </div>
-            <div class="page-embed-content"><div class="iframe-9-16-wrapper"><iframe src="https://docs.google.com/forms/d/e/1FAIpQLScckW2GX_bx50DRKZFLja0VNxXelKx2QhevtFqE9ZGGyBKCqg/viewform?embedded=true" frameborder="0">Memuat…</iframe></div></div>
+            <div class="page-embed-content">
+                <div class="iframe-9-16-wrapper">
+                    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLScckW2GX_bx50DRKZFLja0VNxXelKx2QhevtFqE9ZGGyBKCqg/viewform?embedded=true" frameborder="0">Memuat…</iframe>
+                </div>
+            </div>
         </div>
+        
         <div id="page-yasin" class="page-embed hidden">
             <div class="page-embed-header">
-                <button class="btn-kembali p-2 rounded-full text-white hover:bg-cyan-600 transition-colors" aria-label="Kembali"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg></button>
-                <h2 class="text-lg font-bold text-white">Yasin Morning</h2><div class="w-10"></div>
+                <button class="btn-kembali p-2 rounded-full text-white hover:bg-cyan-600 transition-colors" aria-label="Kembali">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                </button>
+                <h2 class="text-lg font-bold text-white">Yasin Morning</h2>
+                <div class="w-10"></div>
             </div>
-            <div class="page-embed-content"><div class="iframe-9-16-wrapper"><iframe src="https://docs.google.com/forms/d/e/1FAIpQLSddRWmO1Belgu6nNqNp4CcLjDLgywEsTyecLzIt0WgeSFSuKQ/viewform?embedded=true" frameborder="0">Memuat…</iframe></div></div>
+            <div class="page-embed-content">
+                <div class="iframe-9-16-wrapper">
+                    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSddRWmO1Belgu6nNqNp4CcLjDLgywEsTyecLzIt0WgeSFSuKQ/viewform?embedded=true" frameborder="0">Memuat…</iframe>
+                </div>
+            </div>
         </div>
+
         <div id="page-rekap-jurnal" class="page-embed hidden">
             <div class="page-embed-header">
-                <button class="btn-kembali p-2 rounded-full text-white hover:bg-cyan-600 transition-colors" aria-label="Kembali"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg></button>
-                <h2 class="text-lg font-bold text-white">Rekap Jurnal Guru</h2><div class="w-10"></div>
+                <button class="btn-kembali p-2 rounded-full text-white hover:bg-cyan-600 transition-colors" aria-label="Kembali">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                </button>
+                <h2 class="text-lg font-bold text-white">Rekap Jurnal Guru</h2>
+                <div class="w-10"></div>
             </div>
-            <div class="page-embed-content content-full-width"><iframe src="https://lookerstudio.google.com/embed/reporting/5229a8e6-7d59-458e-bf46-5e45250633f8/page/xzTXF" frameborder="0" style="border:0" allowfullscreen></iframe></div>
+            <div class="page-embed-content content-full-width">
+                <iframe src="https://lookerstudio.google.com/embed/reporting/5229a8e6-7d59-458e-bf46-5e45250633f8/page/xzTXF" frameborder="0" style="border:0" allowfullscreen></iframe>
+            </div>
         </div>
+        
         <div id="page-rekap-upacara" class="page-embed hidden">
             <div class="page-embed-header">
-                <button class="btn-kembali p-2 rounded-full text-white hover:bg-cyan-600 transition-colors" aria-label="Kembali"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg></button>
-                <h2 class="text-lg font-bold text-white">Rekap Upacara</h2><div class="w-10"></div>
+                <button class="btn-kembali p-2 rounded-full text-white hover:bg-cyan-600 transition-colors" aria-label="Kembali">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                </button>
+                <h2 class="text-lg font-bold text-white">Rekap Upacara</h2>
+                <div class="w-10"></div>
             </div>
-            <div class="page-embed-content content-full-width"><iframe src="https://lookerstudio.google.com/embed/reporting/5e9c4b94-7aae-4b28-8c89-60be95eec6c4/page/xLkfF" frameborder="0" style="border:0" allowfullscreen></iframe></div>
+            <div class="page-embed-content content-full-width">
+                <iframe src="https://lookerstudio.google.com/embed/reporting/5e9c4b94-7aae-4b28-8c89-60be95eec6c4/page/xLkfF" frameborder="0" style="border:0" allowfullscreen></iframe>
+            </div>
         </div>
+        
         <div id="page-rekap-yasin" class="page-embed hidden">
             <div class="page-embed-header">
-                <button class="btn-kembali p-2 rounded-full text-white hover:bg-cyan-600 transition-colors" aria-label="Kembali"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg></button>
-                <h2 class="text-lg font-bold text-white">Rekap Yasin Morning</h2><div class="w-10"></div>
+                <button class="btn-kembali p-2 rounded-full text-white hover:bg-cyan-600 transition-colors" aria-label="Kembali">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                </button>
+                <h2 class="text-lg font-bold text-white">Rekap Yasin Morning</h2>
+                <div class="w-10"></div>
             </div>
-            <div class="page-embed-content content-full-width"><iframe src="https://lookerstudio.google.com/u/0/reporting/9e33f38f-ee8d-429d-9e4c-176af3a520af" frameborder="0" style="border:0" allowfullscreen></iframe></div>
+            <div class="page-embed-content content-full-width">
+                <iframe src="https://lookerstudio.google.com/u/0/reporting/9e33f38f-ee8d-429d-9e4c-176af3a520af" frameborder="0" style="border:0" allowfullscreen></iframe>
+            </div>
         </div>
 
     </div> <!-- Akhir dari #app-container -->
 
 
-    <!-- Skrip Firebase & Navigasi -->
+    <!-- ============================================== -->
+    <!--       Skrip Firebase dan Logika Aplikasi       -->
+    <!-- ============================================== -->
     <script>
-        // == Konfigurasi Firebase ==
+        // ==========================================
+        // == KONFIGURASI FIREBASE ANDA ==
+        // ==========================================
         const firebaseConfig = {
           apiKey: "AIzaSyCnwDpcZnAn_DzbA6l0ACrAGmyaDzguLEQ",
           authDomain: "malka-jurnal.firebaseapp.com",
@@ -340,19 +425,84 @@
           measurementId: "G-KRGW0JVXYX"
         };
 
+        // Inisialisasi Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const provider = new firebase.auth.GoogleAuthProvider();
 
-        // == Referensi Elemen DOM ==
+        // Ambil Elemen UI
         const loginPage = document.getElementById('login-page');
         const appContainer = document.getElementById('app-container');
-        const btnLogin = document.getElementById('btn-login');
+        const btnGoogleLogin = document.getElementById('btn-google-login');
         const btnSignOut = document.getElementById('btn-sign-out');
-        const userProfilePic = document.getElementById('user-profile-pic');
-        const userName = document.getElementById('user-name');
-        const loader = document.getElementById('loader');
+        const userPhoto = document.getElementById('user-photo');
+        const loginError = document.getElementById('login-error');
         const mainMenu = document.getElementById('main-menu');
+
+        // == Atur Persistensi ==
+        // Ini adalah kunci agar bisa bekerja di environment yang restriktif
+        auth.setPersistence(firebase.auth.Auth.Persistence.NONE)
+            .then(() => {
+                // === SEMUA LOGIKA AUTH DIMULAI DARI SINI ===
+                console.log("Mode persistensi Firebase diatur ke 'none'.");
+
+                // == Penjaga Gerbang (Auth State Change) ==
+                auth.onAuthStateChanged(user => {
+                    if (user) {
+                        // Pengguna sudah login
+                        appContainer.classList.remove('hidden');
+                        loginPage.classList.add('hidden');
+                        
+                        userPhoto.src = user.photoURL || 'https://placehold.co/40x40/FFFFFF/333333?text=?'; // Fallback
+                        
+                        showMainMenu(); 
+        
+                    } else {
+                        // Pengguna logout
+                        appContainer.classList.add('hidden');
+                        loginPage.classList.add('hidden');
+                        userPhoto.src = '';
+                        
+                        document.querySelectorAll('.page-embed').forEach(page => {
+                            page.classList.add('hidden');
+                        });
+                    }
+                });
+        
+                // == Logika Tombol ==
+        
+                // Tombol Login Google
+                btnGoogleLogin.addEventListener('click', () => {
+                    loginError.textContent = ''; // Hapus error lama
+                    console.log("Mencoba login dengan POPUP...");
+                    
+                    // Gunakan signInWithPopup
+                    auth.signInWithPopup(provider)
+                        .then(result => {
+                            console.log("Login popup berhasil:", result.user);
+                        })
+                        .catch(error => {
+                            console.error("Error saat signInWithPopup:", error);
+                            loginError.textContent = "Gagal login: " + error.message;
+                            if (error.code === 'auth/popup-blocked') {
+                                loginError.textContent = "Gagal: Popup login diblokir oleh browser.";
+                            }
+                        });
+                });
+        
+                // Tombol Sign Out
+                btnSignOut.addEventListener('click', () => {
+                    auth.signOut();
+                });
+
+            })
+            .catch(error => {
+                console.error("Error GAGAL MENGATUR PERSISTENSI:", error);
+                loginError.textContent = "Error kritis: Tidak dapat memulai auth. " + error.message;
+            });
+
+
+        // == Logika Navigasi Aplikasi ==
         
         const pageMap = {
             'btn-jurnal': 'page-jurnal',
@@ -363,63 +513,6 @@
             'btn-rekap-yasin': 'page-rekap-yasin'
         };
 
-        // == Logika Autentikasi ==
-
-        // 1. Tampilkan loader saat halaman dimuat
-        loader.classList.remove('hidden');
-        btnLogin.classList.add('hidden');
-
-        // 2. "Tangkap" hasil redirect login
-        auth.getRedirectResult()
-            .then((result) => {
-                // Fungsi ini akan dijalankan. Jika 'result.user' ada,
-                // onAuthStateChanged akan segera dipanggil dengan data user.
-                // Jika tidak, onAuthStateChanged akan dipanggil dengan 'null'.
-            })
-            .catch((error) => {
-                console.error("Error saat getRedirectResult:", error.message);
-                alert("Gagal memproses login: " + error.message);
-                // Jika gagal, tampilkan tombol login lagi
-                loader.classList.add('hidden');
-                btnLogin.classList.remove('hidden');
-            });
-
-        // 3. Penjaga Gerbang (Auth State Listener)
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                // Pengguna SUDAH login
-                appContainer.classList.remove('hidden');
-                loginPage.classList.add('hidden');
-                
-                userProfilePic.src = user.photoURL || 'https://via.placeholder.com/40';
-                userName.textContent = user.displayName || 'Pengguna';
-                
-            } else {
-                // Pengguna BELUM login
-                appContainer.classList.add('hidden');
-                loginPage.classList.remove('hidden');
-                
-                loader.classList.add('hidden');
-                btnLogin.classList.remove('hidden');
-            }
-        });
-
-        // 4. Tombol Login (Aksi Klik)
-        btnLogin.addEventListener('click', () => {
-            loader.classList.remove('hidden');
-            btnLogin.classList.add('hidden');
-            auth.signInWithRedirect(provider);
-        });
-
-        // 5. Tombol Logout
-        btnSignOut.addEventListener('click', () => {
-            auth.signOut().catch((error) => {
-                console.error("Error saat logout:", error);
-            });
-        });
-
-        // == Logika Navigasi Aplikasi ==
-        
         function showPage(pageId) {
             mainMenu.classList.add('hidden');
             document.querySelectorAll('.page-embed').forEach(page => {
@@ -455,7 +548,7 @@
                 if (iframe) {
                     const src = iframe.src;
                     iframe.src = null;
-                    iframe.src = src; 
+                    iframe.src = src;
                 }
                 showMainMenu();
             });
