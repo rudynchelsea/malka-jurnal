@@ -23,7 +23,7 @@
         }
         .font-serif { font-family: 'Merriweather', serif; }
 
-        /* ... [Semua CSS dari versi sebelumnya tetap ada di sini] ... */
+        /* ... [CSS yang ada sebelumnya tetap sama] ... */
         .shortcut-card {
             border-radius: 1rem;
             box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
@@ -140,10 +140,8 @@
     <div id="login-page" class="flex flex-col items-center justify-center min-h-screen p-4">
         <div class="w-full max-w-sm text-center">
             
-            <!-- Logo Sekolah -->
             <img src="https://smkn1plosoklaten.sch.id/img/logo-smk.png" alt="Logo SMKN 1 Plosoklaten" class="h-20 w-auto mx-auto mb-4">
             
-            <!-- Judul -->
             <h1 class="text-3xl font-bold font-serif text-gradient-gold" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.2); background-image: linear-gradient(to right, #0A4D68 0%, #086a8b 50%, #0A4D68 100%);">
                 MALKA JURNAL
             </h1>
@@ -169,20 +167,14 @@
         <header class="bg-gradient-to-r from-teal-600 to-cyan-700 shadow-lg p-4 fixed top-0 left-0 right-0 z-10">
             <div class="container mx-auto max-w-5xl flex justify-between items-center">
                 
-                <!-- Logo Sekolah -->
                 <img src="https://smkn1plosoklaten.sch.id/img/logo-smk.png" alt="Logo SMKN 1 Plosoklaten" class="h-10 w-auto">
-
-                <!-- Judul -->
                 <h1 class="text-xl sm:text-2xl font-bold tracking-wide font-serif text-gradient-gold" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.2);">
                     MALKA JURNAL
                 </h1>
 
                 <!-- Info User (Dropdown Sederhana) -->
                 <div class="relative group">
-                    <!-- Foto Profil User -->
                     <img id="user-profile-pic" src="" alt="Foto Profil" class="h-10 w-10 rounded-full cursor-pointer border-2 border-white shadow-md">
-                    
-                    <!-- Dropdown Menu (Muncul saat hover) -->
                     <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl z-20 overflow-hidden hidden group-hover:block transition-all duration-300 opacity-0 group-hover:opacity-100 transform scale-95 group-hover:scale-100">
                         <div class="p-4">
                             <p class="font-semibold text-gray-800 text-sm">Selamat datang,</p>
@@ -204,7 +196,6 @@
         <!--      BAGIAN 1: MENU UTAMA (DASHBOARD)          -->
         <!-- ============================================== -->
         <div id="main-menu">
-            <!-- [KODE MENU UTAMA (Hero + 6 Tombol) TETAP SAMA SEPERTI SEBELUMNYA] -->
             <main class="container mx-auto max-w-5xl p-4 sm:p-6">
                 <!-- Hero Section -->
                 <div class="w-full h-48 sm:h-64 md:h-80 rounded-2xl shadow-inner overflow-hidden relative mb-6" style="background: linear-gradient(135deg, #0A4D68 0%, #086a8b 100%);">
@@ -303,7 +294,6 @@
         <!-- ============================================== -->
         <!--     BAGIAN 2: HALAMAN-HALAMAN EMBED            -->
         <!-- ============================================== -->
-        <!-- [KODE SEMUA 6 HALAMAN EMBED TETAP SAMA SEPERTI SEBELUMNYA] -->
         <div id="page-jurnal" class="page-embed hidden">
             <div class="page-embed-header">
                 <button class="btn-kembali p-2 rounded-full text-white hover:bg-cyan-600 transition-colors" aria-label="Kembali"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg></button>
@@ -380,7 +370,6 @@
         const loader = document.getElementById('loader');
         const mainMenu = document.getElementById('main-menu');
         
-        // Peta Halaman
         const pageMap = {
             'btn-jurnal': 'page-jurnal',
             'btn-upacara': 'page-upacara',
@@ -392,8 +381,31 @@
 
         // == Logika Autentikasi ==
 
-        // 1. Penjaga Gerbang (Auth State Listener)
-        // Ini berjalan saat halaman dimuat
+        // 1. Tampilkan loader dan sembunyikan tombol login saat halaman dimuat
+        //    Ini memberi tahu pengguna "Kami sedang memeriksa status login Anda"
+        loader.classList.remove('hidden');
+        btnLogin.classList.add('hidden');
+
+        // 2. PERBAIKAN: Panggil getRedirectResult() untuk "menangkap" login
+        //    Ini adalah fungsi yang hilang sebelumnya.
+        auth.getRedirectResult()
+            .then((result) => {
+                // Jika 'result.user' ada, login berhasil ditangkap.
+                // 'onAuthStateChanged' akan segera dipanggil setelah ini.
+                // Jika tidak ada redirect (beban halaman normal), 'result.user' akan null.
+            })
+            .catch((error) => {
+                // Tangani error (misal: domain tidak sah, dll.)
+                console.error("Error saat getRedirectResult:", error.message);
+                alert("Gagal memproses login: " + error.message);
+                // Jika gagal, tampilkan tombol login lagi
+                loader.classList.add('hidden');
+                btnLogin.classList.remove('hidden');
+            });
+
+
+        // 3. Penjaga Gerbang (Auth State Listener)
+        //    Ini adalah sumber kebenaran tunggal.
         auth.onAuthStateChanged((user) => {
             if (user) {
                 // Pengguna SUDAH login
@@ -401,35 +413,31 @@
                 loginPage.classList.add('hidden');
                 
                 // Perbarui UI Header
-                userProfilePic.src = user.photoURL || 'https://via.placeholder.com/40'; // Fallback
+                userProfilePic.src = user.photoURL || 'https://via.placeholder.com/40';
                 userName.textContent = user.displayName || 'Pengguna';
                 
             } else {
-                // Pengguna BELUM login
+                // Pengguna BELUM login (atau sudah logout)
                 appContainer.classList.add('hidden');
                 loginPage.classList.remove('hidden');
-                loader.classList.add('hidden'); // Sembunyikan loader jika ada
+                
+                // Tampilkan tombol login, sembunyikan loader
+                loader.classList.add('hidden');
+                btnLogin.classList.remove('hidden');
             }
         });
 
-        // 2. Tombol Login
+        // 4. Tombol Login (Aksi Klik)
         btnLogin.addEventListener('click', () => {
             loader.classList.remove('hidden'); // Tampilkan loader
             btnLogin.classList.add('hidden');  // Sembunyikan tombol
             
-            // Gunakan signInWithRedirect (lebih baik untuk mobile dan environment terbatas)
-            // Ini akan mengarahkan halaman ke Google, lalu kembali
-            auth.signInWithRedirect(provider)
-                .catch((error) => {
-                    // Jika ada error (misal: popup diblokir)
-                    console.error("Error saat login:", error);
-                    loader.classList.add('hidden');
-                    btnLogin.classList.remove('hidden');
-                    alert("Gagal login: " + error.message);
-                });
+            auth.signInWithRedirect(provider);
+            // Tidak perlu .catch di sini karena akan ditangkap oleh getRedirectResult
+            // saat halaman dimuat ulang.
         });
 
-        // 3. Tombol Logout
+        // 5. Tombol Logout
         btnSignOut.addEventListener('click', () => {
             auth.signOut().catch((error) => {
                 console.error("Error saat logout:", error);
