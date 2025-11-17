@@ -23,7 +23,6 @@
         }
         .font-serif { font-family: 'Merriweather', serif; }
 
-        /* ... [CSS yang ada sebelumnya tetap sama] ... */
         .shortcut-card {
             border-radius: 1rem;
             box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
@@ -117,7 +116,6 @@
           background-clip: text; text-fill-color: transparent;
         }
         
-        /* Loading Spinner */
         #loader {
           border: 4px solid #f3f3f3;
           border-top: 4px solid #0A4D68;
@@ -134,9 +132,7 @@
 </head>
 <body class="antialiased text-gray-900">
 
-    <!-- ============================================== -->
-    <!--         HALAMAN LOGIN (Tampil Awal)            -->
-    <!-- ============================================== -->
+    <!-- Halaman Login -->
     <div id="login-page" class="flex flex-col items-center justify-center min-h-screen p-4">
         <div class="w-full max-w-sm text-center">
             
@@ -147,23 +143,19 @@
             </h1>
             <p class="text-cyan-800 mt-2 mb-8">Silakan login untuk melanjutkan</p>
 
-            <!-- Tombol Login -->
             <button id="btn-login" class="w-full bg-white shadow-lg rounded-lg px-6 py-3 flex items-center justify-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
                 <svg class="w-6 h-6 mr-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48px" height="48px"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12s5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24s8.955,20,20,20s20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.222,0-9.619-3.317-11.28-7.962l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.088,5.574l6.19,5.238C39.912,35.533,44,29.898,44,24C44,22.659,43.862,21.35,43.611,20.083z"/></svg>
                 <span class="font-semibold text-gray-700">Login dengan Google</span>
             </button>
             
-            <!-- Loader (tersembunyi) -->
             <div id="loader" class="hidden mx-auto mt-8"></div>
         </div>
     </div>
 
-    <!-- ============================================== -->
-    <!--    KONTEN APLIKASI UTAMA (Tersembunyi Awal)   -->
-    <!-- ============================================== -->
+    <!-- Konten Aplikasi Utama (Tersembunyi Awal) -->
     <div id="app-container" class="hidden">
 
-        <!-- Header Utama (dengan Info User) -->
+        <!-- Header Utama -->
         <header class="bg-gradient-to-r from-teal-600 to-cyan-700 shadow-lg p-4 fixed top-0 left-0 right-0 z-10">
             <div class="container mx-auto max-w-5xl flex justify-between items-center">
                 
@@ -192,9 +184,7 @@
             </div>
         </header>
 
-        <!-- ============================================== -->
-        <!--      BAGIAN 1: MENU UTAMA (DASHBOARD)          -->
-        <!-- ============================================== -->
+        <!-- Menu Utama (Dashboard) -->
         <div id="main-menu">
             <main class="container mx-auto max-w-5xl p-4 sm:p-6">
                 <!-- Hero Section -->
@@ -285,15 +275,12 @@
                     </button>
                 </div>
             </main>
-            <!-- Footer -->
             <footer class="text-center p-6 mt-10">
                 <p class="text-sm text-cyan-800 opacity-75">&copy; 2025 SMKN 1 Plosoklaten. Dibuat dengan <span class="text-red-500">❤️</span></p>
             </footer>
         </div>
 
-        <!-- ============================================== -->
-        <!--     BAGIAN 2: HALAMAN-HALAMAN EMBED            -->
-        <!-- ============================================== -->
+        <!-- Halaman-Halaman Embed -->
         <div id="page-jurnal" class="page-embed hidden">
             <div class="page-embed-header">
                 <button class="btn-kembali p-2 rounded-full text-white hover:bg-cyan-600 transition-colors" aria-label="Kembali"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg></button>
@@ -340,9 +327,7 @@
     </div> <!-- Akhir dari #app-container -->
 
 
-    <!-- ============================================== -->
-    <!--       Skrip Firebase & Navigasi                -->
-    <!-- ============================================== -->
+    <!-- Skrip Firebase & Navigasi -->
     <script>
         // == Konfigurasi Firebase ==
         const firebaseConfig = {
@@ -355,7 +340,6 @@
           measurementId: "G-KRGW0JVXYX"
         };
 
-        // Inisialisasi Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const provider = new firebase.auth.GoogleAuthProvider();
@@ -381,21 +365,18 @@
 
         // == Logika Autentikasi ==
 
-        // 1. Tampilkan loader dan sembunyikan tombol login saat halaman dimuat
-        //    Ini memberi tahu pengguna "Kami sedang memeriksa status login Anda"
+        // 1. Tampilkan loader saat halaman dimuat
         loader.classList.remove('hidden');
         btnLogin.classList.add('hidden');
 
-        // 2. PERBAIKAN: Panggil getRedirectResult() untuk "menangkap" login
-        //    Ini adalah fungsi yang hilang sebelumnya.
+        // 2. "Tangkap" hasil redirect login
         auth.getRedirectResult()
             .then((result) => {
-                // Jika 'result.user' ada, login berhasil ditangkap.
-                // 'onAuthStateChanged' akan segera dipanggil setelah ini.
-                // Jika tidak ada redirect (beban halaman normal), 'result.user' akan null.
+                // Fungsi ini akan dijalankan. Jika 'result.user' ada,
+                // onAuthStateChanged akan segera dipanggil dengan data user.
+                // Jika tidak, onAuthStateChanged akan dipanggil dengan 'null'.
             })
             .catch((error) => {
-                // Tangani error (misal: domain tidak sah, dll.)
                 console.error("Error saat getRedirectResult:", error.message);
                 alert("Gagal memproses login: " + error.message);
                 // Jika gagal, tampilkan tombol login lagi
@@ -403,25 +384,21 @@
                 btnLogin.classList.remove('hidden');
             });
 
-
         // 3. Penjaga Gerbang (Auth State Listener)
-        //    Ini adalah sumber kebenaran tunggal.
         auth.onAuthStateChanged((user) => {
             if (user) {
                 // Pengguna SUDAH login
                 appContainer.classList.remove('hidden');
                 loginPage.classList.add('hidden');
                 
-                // Perbarui UI Header
                 userProfilePic.src = user.photoURL || 'https://via.placeholder.com/40';
                 userName.textContent = user.displayName || 'Pengguna';
                 
             } else {
-                // Pengguna BELUM login (atau sudah logout)
+                // Pengguna BELUM login
                 appContainer.classList.add('hidden');
                 loginPage.classList.remove('hidden');
                 
-                // Tampilkan tombol login, sembunyikan loader
                 loader.classList.add('hidden');
                 btnLogin.classList.remove('hidden');
             }
@@ -429,12 +406,9 @@
 
         // 4. Tombol Login (Aksi Klik)
         btnLogin.addEventListener('click', () => {
-            loader.classList.remove('hidden'); // Tampilkan loader
-            btnLogin.classList.add('hidden');  // Sembunyikan tombol
-            
+            loader.classList.remove('hidden');
+            btnLogin.classList.add('hidden');
             auth.signInWithRedirect(provider);
-            // Tidak perlu .catch di sini karena akan ditangkap oleh getRedirectResult
-            // saat halaman dimuat ulang.
         });
 
         // 5. Tombol Logout
@@ -442,7 +416,6 @@
             auth.signOut().catch((error) => {
                 console.error("Error saat logout:", error);
             });
-            // onAuthStateChanged akan otomatis menangani sisanya
         });
 
         // == Logika Navigasi Aplikasi ==
