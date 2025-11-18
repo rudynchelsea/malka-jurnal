@@ -469,28 +469,29 @@
 
                 // == Penjaga Gerbang (Auth State Change) ==
                 auth.onAuthStateChanged(user => {
-                  if (user) {
-                      // Pengguna sudah login
-                      appContainer.classList.remove('hidden');
-                      loginPage.classList.add('hidden');
-                      
-                      // Set foto profil
-                      userPhoto.src = user.photoURL || 'https://placehold.co/40x40/FFFFFF/333333?text=?'; // Fallback
-                      
-                      // Pastikan menu utama terlihat jika pengguna login
-                      showMainMenu(); // Tampilkan menu utama, bukan halaman embed yang tersembunyi
-                  } else {
-                      // Pengguna logout
-                      appContainer.classList.add('hidden');
-                      loginPage.classList.remove('hidden');
-                      userPhoto.src = '';
-                      
-                      // Sembunyikan semua halaman embed saat logout
-                      document.querySelectorAll('.page-embed').forEach(page => {
-                          page.classList.add('hidden');
-                      });
-                  }
-              });
+                    if (user) {
+                        // Pengguna sudah login
+                        appContainer.classList.remove('hidden');
+                        loginPage.classList.add('hidden');
+                        
+                        // Set foto profil
+                        userPhoto.src = user.photoURL || 'https://placehold.co/40x40/FFFFFF/333333?text=?'; // Fallback
+                        
+                        // Pastikan menu utama terlihat jika pengguna login
+                        showMainMenu(); 
+        
+                    } else {
+                        // Pengguna logout
+                        appContainer.classList.add('hidden');
+                        loginPage.classList.remove('hidden');
+                        userPhoto.src = '';
+                        
+                        // Sembunyikan semua halaman embed saat logout
+                        document.querySelectorAll('.page-embed').forEach(page => {
+                            page.classList.add('hidden');
+                        });
+                    }
+                });
 
                 // == PERBAIKAN: Hapus getRedirectResult() ==
                 // Bagian ini adalah yang menyebabkan error saat halaman dimuat
@@ -545,28 +546,33 @@
             'btn-rekap-yasin': 'page-rekap-yasin'
         };
 
-        // Fungsi untuk menampilkan halaman embed tertentu
-          function showPage(pageId) {
-              mainMenu.classList.add('hidden');
-              document.querySelectorAll('.page-embed').forEach(page => {
-                  page.classList.add('hidden');
-              });
-              const pageToShow = document.getElementById(pageId);
-              if (pageToShow) {
-                  pageToShow.classList.remove('hidden');
-                  window.scrollTo(0, 0); // Pastikan halaman berada di posisi atas
-              }
-          }
-          
-          // Navigasi berdasarkan tombol yang dipilih
-          Object.keys(pageMap).forEach(buttonId => {
-              const button = document.getElementById(buttonId);
-              if (button) {
-                  button.addEventListener('click', () => {
-                      showPage(pageMap[buttonId]);
-                  });
-              }
-          });
+        function showPage(pageId) {
+            mainMenu.classList.add('hidden');
+            document.querySelectorAll('.page-embed').forEach(page => {
+                page.classList.add('hidden');
+            });
+            const pageToShow = document.getElementById(pageId);
+            if (pageToShow) {
+                pageToShow.classList.remove('hidden');
+                window.scrollTo(0, 0);
+            }
+        }
+
+        function showMainMenu() {
+            mainMenu.classList.remove('hidden');
+            document.querySelectorAll('.page-embed').forEach(page => {
+                page.classList.add('hidden');
+            });
+        }
+
+        Object.keys(pageMap).forEach(buttonId => {
+            const button = document.getElementById(buttonId);
+            if (button) {
+                button.addEventListener('click', () => {
+                    showPage(pageMap[buttonId]);
+                });
+            }
+        });
 
         document.querySelectorAll('.btn-kembali').forEach(button => {
             button.addEventListener('click', () => {
