@@ -17,7 +17,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
 
-        // Firebase configuration (dengan API Key yang valid)
+        // Firebase configuration
         const firebaseConfig = {
           apiKey: "AIzaSyCnwDpcZnAn_DzbA6l0ACrAGmyaDzguLEQ",
           authDomain: "malka-jurnal.firebaseapp.com",
@@ -96,7 +96,11 @@
         // Show page based on button click
         const pageMap = {
             'btn-jurnal': 'page-jurnal',
-            // Other page mappings here
+            'btn-upacara': 'page-upacara',
+            'btn-yasin': 'page-yasin',
+            'btn-rekap-jurnal': 'page-rekap-jurnal',
+            'btn-rekap-upacara': 'page-rekap-upacara',
+            'btn-rekap-yasin': 'page-rekap-yasin'
         };
 
         function showPage(pageId) {
