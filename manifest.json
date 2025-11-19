@@ -1,0 +1,22 @@
+{
+  "name": "Malka Jurnal",
+  "short_name": "MalkaJurnal",
+  "description": "Aplikasi Jurnal Mengajar SMKN 1 Plosoklaten",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#D0FFF0",
+  "theme_color": "#0A4D68",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://smkn1plosoklaten.sch.id/img/logo-smk.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://smkn1plosoklaten.sch.id/img/logo-smk.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
