@@ -352,7 +352,7 @@
 </head>
 <body>
     <!-- Navigation -->
-    <!-- FIX: Tambahkan style="display: none;" agar tersembunyi saat awal load -->
+    <!-- Navbar disembunyikan default (display: none) dan akan dimunculkan oleh JS setelah login -->
     <nav class="navbar" style="display: none;">
         <div class="navbar-brand">
             <span class="material-icons">school</span>
@@ -653,16 +653,19 @@
 
     <script>
         // ==============================================
-        // INISIALISASI FIREBASE YANG AMAN
+        // CONFIG & GLOBAL VARIABLES
         // ==============================================
         
-        // Tunggu sampai DOM dan semua resources siap
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM siap, menginisialisasi Firebase...');
-            initializeFirebase();
-        });
+        // Pindahkan firebaseConfig ke scope global agar bisa diakses fungsi import
+        const firebaseConfig = {
+            apiKey: "AIzaSyDVuk2vIYCD-GXHJd7ySF8cPLq-T3Gj1vk",
+            authDomain: "pwaprojek.firebaseapp.com",
+            projectId: "pwaprojek",
+            storageBucket: "pwaprojek.firebasestorage.app",
+            messagingSenderId: "724996026764",
+            appId: "1:724996026764:web:4ca2d37a559c7e0c8ca6a9"
+        };
 
-        // Variabel global untuk Firebase services
         let auth = null;
         let db = null;
         let storage = null;
@@ -678,94 +681,60 @@
             { email: 'ortu@smartschool.com', password: 'ortu123', role: 'orang_tua', name: 'Orang Tua' }
         ];
 
+        // Tunggu sampai DOM dan semua resources siap
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM siap, menginisialisasi Firebase...');
+            initializeFirebase();
+        });
+
         function initializeFirebase() {
             try {
-                // Firebase Configuration
-                const firebaseConfig = {
-                    apiKey: "AIzaSyDVuk2vIYCD-GXHJd7ySF8cPLq-T3Gj1vk",
-                    authDomain: "pwaprojek.firebaseapp.com",
-                    projectId: "pwaprojek",
-                    storageBucket: "pwaprojek.firebasestorage.app",
-                    messagingSenderId: "724996026764",
-                    appId: "1:724996026764:web:4ca2d37a559c7e0c8ca6a9"
-                };
-
-                // Cek apakah Firebase SDK sudah dimuat
                 if (typeof firebase === 'undefined') {
                     throw new Error('Firebase SDK belum dimuat. Periksa koneksi internet.');
                 }
 
-                // Initialize Firebase
-                // Menggunakan Compat: tidak perlu const app = ... jika kita pakai variabel global 'firebase'
                 if (!firebase.apps.length) {
                     firebase.initializeApp(firebaseConfig);
                 }
                 
-                // Initialize services
                 auth = firebase.auth();
                 db = firebase.firestore();
                 storage = firebase.storage();
                 
                 console.log('✅ Firebase berhasil diinisialisasi');
-                console.log('Auth:', auth);
-                console.log('Firestore:', db);
-
-                // Setup authentication state listener
                 setupAuthListener();
-                
-                // Setup event listeners untuk UI
                 setupEventListeners();
                 
             } catch (error) {
                 console.error('❌ Error inisialisasi Firebase:', error);
-                
-                // Tampilkan error ke user
                 const alertDiv = document.getElementById('login-alert');
                 if (alertDiv) {
-                    alertDiv.innerHTML = `
-                        <strong>Error Firebase:</strong> ${error.message}<br>
-                        <small>Periksa:<br>
-                        1. Koneksi internet<br>
-                        2. API key Firebase<br>
-                        3. Firewall/blocker</small>
-                    `;
+                    alertDiv.innerHTML = `<strong>Error Firebase:</strong> ${error.message}`;
                     alertDiv.style.display = 'block';
                 }
-                
-                alert('Gagal menginisialisasi Firebase. Buka console (F12) untuk detail error.');
             }
         }
 
         function setupAuthListener() {
-            if (!auth) {
-                console.error('Auth belum diinisialisasi');
-                return;
-            }
+            if (!auth) return;
             
-            // Listen untuk perubahan state authentication
             auth.onAuthStateChanged(function(user) {
-                console.log('Auth state changed:', user ? user.email : 'No user');
                 currentUser = user;
-                
-                // FIX: Kontrol visibilitas navbar
                 const navbar = document.querySelector('.navbar');
 
                 if (user) {
-                    // User logged in
-                    if (navbar) navbar.style.display = 'flex'; // Tampilkan navbar
+                    if (navbar) navbar.style.display = 'flex';
                     loadUserData();
                     showPage('dashboard');
                     updateUIForRole();
                 } else {
-                    // User logged out
-                    if (navbar) navbar.style.display = 'none'; // Sembunyikan navbar
+                    if (navbar) navbar.style.display = 'none';
                     showPage('login');
                 }
             });
         }
 
         function setupEventListeners() {
-            // Setup dummy user selector
             const dummySelect = document.getElementById('dummy-users');
             if (dummySelect) {
                 dummySelect.addEventListener('change', selectDummyUser);
@@ -776,7 +745,6 @@
         // FUNGSI UTAMA APLIKASI
         // ==============================================
 
-        // Fungsi Login
         window.login = async function() {
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
@@ -787,70 +755,29 @@
                 return;
             }
 
-            if (!auth) {
-                showAlert(alertDiv, 'Sistem autentikasi belum siap. Refresh halaman.', 'danger');
-                return;
-            }
-
             try {
-                console.log('Attempting login with:', email);
-                const userCredential = await auth.signInWithEmailAndPassword(email, password);
-                currentUser = userCredential.user;
-                
-                console.log('Login berhasil:', currentUser.email);
+                await auth.signInWithEmailAndPassword(email, password);
                 showAlert(alertDiv, 'Login berhasil! Mengarahkan ke dashboard...', 'success');
-                
-                // User akan otomatis diarahkan oleh auth state listener
-                
             } catch (error) {
                 console.error('Login error:', error);
-                
-                let errorMessage = 'Login gagal: ';
-                switch (error.code) {
-                    case 'auth/user-not-found':
-                        errorMessage += 'User tidak ditemukan';
-                        break;
-                    case 'auth/wrong-password':
-                        errorMessage += 'Password salah';
-                        break;
-                    case 'auth/invalid-email':
-                        errorMessage += 'Email tidak valid';
-                        break;
-                    case 'auth/network-request-failed':
-                        errorMessage += 'Gagal koneksi ke server';
-                        break;
-                    default:
-                        errorMessage += error.message;
-                }
-                
-                showAlert(alertDiv, errorMessage, 'danger');
+                showAlert(alertDiv, 'Login gagal: ' + error.message, 'danger');
             }
         };
 
-        // Fungsi Logout
         window.logout = function() {
             if (confirm('Apakah Anda yakin ingin logout?')) {
                 auth.signOut().then(() => {
                     currentUser = null;
                     showPage('login');
-                    
-                    // Reset form
                     document.getElementById('login-email').value = '';
                     document.getElementById('login-password').value = '';
-                    const dummySelect = document.getElementById('dummy-users');
-                    if (dummySelect) dummySelect.value = '';
-                }).catch(error => {
-                    console.error('Logout error:', error);
-                    alert('Gagal logout: ' + error.message);
-                });
+                }).catch(error => alert('Gagal logout: ' + error.message));
             }
         };
 
-        // Fungsi pilih user dummy
         window.selectDummyUser = function() {
             const select = document.getElementById('dummy-users');
             const index = parseInt(select.value);
-            
             if (index >= 0 && index < DUMMY_USERS.length) {
                 const user = DUMMY_USERS[index];
                 document.getElementById('login-email').value = user.email;
@@ -858,69 +785,28 @@
             }
         };
 
-        // Fungsi untuk membuat user di Firestore
-        async function createUserInFirestore(user, role) {
-            try {
-                const userData = {
-                    username: user.email.split('@')[0],
-                    email: user.email,
-                    role: role,
-                    created_at: firebase.firestore.FieldValue.serverTimestamp(),
-                    profile_picture: ''
-                };
-
-                await db.collection('Users').doc(user.uid).set(userData);
-                console.log('User created in Firestore:', user.uid);
-                
-            } catch (error) {
-                console.error('Error creating user in Firestore:', error);
-            }
-        }
-
-        // Fungsi untuk menampilkan alert
         function showAlert(element, message, type) {
             if (!element) return;
-            
             element.textContent = message;
             element.className = `alert alert-${type}`;
             element.style.display = 'flex';
-            
-            setTimeout(() => {
-                element.style.display = 'none';
-            }, 5000);
+            setTimeout(() => { element.style.display = 'none'; }, 5000);
         }
 
-        // Fungsi untuk pindah halaman
         window.showPage = function(pageId) {
-            // Hide all pages
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
-            });
-            
-            // Show selected page
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
             const targetPage = document.getElementById(pageId + '-page');
-            if (targetPage) {
-                targetPage.classList.add('active');
-            }
+            if (targetPage) targetPage.classList.add('active');
             
-            // Load page-specific data
-            if (pageId === 'dashboard' && currentUser) {
-                loadDashboardData();
-            } else if (pageId === 'announcements') {
-                loadAnnouncements();
-            } else if (pageId === 'users') {
-                loadAllUsers();
-            }
+            if (pageId === 'dashboard' && currentUser) loadDashboardData();
+            else if (pageId === 'announcements') loadAnnouncements();
+            else if (pageId === 'users') loadAllUsers();
         };
 
-        // Fungsi untuk update UI berdasarkan role
         window.updateUIForRole = function() {
             if (!currentUser) return;
-            
-            // Sementara gunakan email untuk menentukan role
-            // Nanti akan diambil dari Firestore
             const email = currentUser.email;
-            let role = 'guru'; // default
+            let role = 'guru';
             
             if (email.includes('admin')) role = 'super_admin';
             else if (email.includes('kepsek')) role = 'kepala_sekolah';
@@ -929,13 +815,9 @@
             else if (email.includes('staf')) role = 'staf_tu';
             else if (email.includes('ortu')) role = 'orang_tua';
             
-            // Update role di UI
             const roleElement = document.getElementById('user-role');
-            if (roleElement) {
-                roleElement.textContent = role.replace('_', ' ').toUpperCase();
-            }
+            if (roleElement) roleElement.textContent = role.replace('_', ' ').toUpperCase();
             
-            // Show/hide admin features
             if (role === 'super_admin' || role === 'kepala_sekolah') {
                 document.getElementById('admin-menu').style.display = 'flex';
                 document.getElementById('import-menu').style.display = 'flex';
@@ -945,77 +827,150 @@
             }
         };
 
-        // Fungsi untuk load user data
         async function loadUserData() {
             if (!currentUser || !db) return;
-
-            try {
-                // Update avatar
-                const avatar = document.getElementById('user-avatar');
-                if (avatar) {
-                    avatar.textContent = currentUser.email.charAt(0).toUpperCase();
-                }
-                
-                // Update name
-                const nameElement = document.getElementById('user-name');
-                if (nameElement) {
-                    nameElement.textContent = currentUser.email.split('@')[0];
-                }
-                
-            } catch (error) {
-                console.error('Error loading user data:', error);
-            }
+            const avatar = document.getElementById('user-avatar');
+            if (avatar) avatar.textContent = currentUser.email.charAt(0).toUpperCase();
+            const nameElement = document.getElementById('user-name');
+            if (nameElement) nameElement.textContent = currentUser.email.split('@')[0];
         }
 
         // ==============================================
-        // FUNGSI TAMBAHAN (SIMPLE VERSION)
+        // FITUR IMPORT & DOWNLOAD TEMPLATE (DIPERBAIKI)
         // ==============================================
-        
-        // Untuk sementara, kita buat fungsi-fungsi sederhana
-        // Nanti bisa dikembangkan
-        
-        window.loadDashboardData = async function() {
-            console.log('Loading dashboard data...');
-            // Implementasi nanti
-        };
-        
-        window.loadAnnouncements = async function() {
-            console.log('Loading announcements...');
-            // Implementasi nanti
-        };
-        
-        window.loadAllUsers = async function() {
-            console.log('Loading users...');
-            // Implementasi nanti
-        };
-        
-        window.showNewAnnouncementModal = function() {
-            alert('Fitur akan segera tersedia!');
-        };
-        
-        window.closeModal = function(modalId) {
-            alert('Fitur akan segera tersedia!');
-        };
-        
-        window.createAnnouncement = function() {
-            alert('Fitur akan segera tersedia!');
-        };
-        
-        window.showUserType = function(type) {
-            alert('Fitur akan segera tersedia!');
-        };
-        
+
         window.downloadTemplate = function(type) {
-            alert('Fitur akan segera tersedia!');
+            let csvContent = "data:text/csv;charset=utf-8,";
+            let filename = "";
+
+            if (type === 'guru') {
+                csvContent += "NIP,Nama Lengkap,Email,Telepon,Mata Pelajaran\n";
+                csvContent += "19800101,Budi Santoso,budi.guru@sekolah.id,08123456789,Matematika";
+                filename = "template_guru.csv";
+            } else if (type === 'siswa') {
+                csvContent += "NIS,Nama Lengkap,Email,Kelas,Telepon\n";
+                csvContent += "2024001,Siti Aminah,siti.siswa@sekolah.id,X-A,08987654321";
+                filename = "template_siswa.csv";
+            }
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", filename);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         };
-        
+
+        // Helper untuk memproses import file
+        async function processImport(fileInputId, role, mapRowToData) {
+            const fileInput = document.getElementById(fileInputId);
+            const file = fileInput.files[0];
+            if (!file) {
+                alert("Silakan pilih file CSV terlebih dahulu!");
+                return;
+            }
+
+            const resultDiv = document.getElementById('import-result');
+            resultDiv.innerHTML = '<div class="spinner"></div><p style="text-align:center">Memproses data... Mohon tunggu.</p>';
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const text = e.target.result;
+                const rows = text.split('\n').slice(1); // Skip header
+                let successCount = 0;
+                let failCount = 0;
+
+                // Trik: Gunakan secondary app agar tidak logout admin saat create user
+                let secondaryApp;
+                try {
+                     // Cek apakah secondary app sudah ada, jika tidak buat baru
+                     secondaryApp = firebase.initializeApp(firebaseConfig, "SecondaryAppImport");
+                } catch (e) {
+                     secondaryApp = firebase.app("SecondaryAppImport");
+                }
+                
+                const secondaryAuth = secondaryApp.auth();
+
+                for (let row of rows) {
+                    if (!row.trim()) continue;
+                    
+                    const cols = row.split(',');
+                    // Validasi minimal kolom
+                    if (cols.length < 3) {
+                        console.warn("Baris tidak valid (kurang kolom):", row);
+                        failCount++;
+                        continue;
+                    }
+
+                    const userData = mapRowToData(cols);
+                    
+                    try {
+                        // 1. Buat User di Auth (Password Default: 123456)
+                        const userCred = await secondaryAuth.createUserWithEmailAndPassword(userData.email, "123456");
+                        
+                        // 2. Simpan Data di Firestore (Gunakan DB utama)
+                        await db.collection('Users').doc(userCred.user.uid).set({
+                            ...userData,
+                            role: role,
+                            created_at: firebase.firestore.FieldValue.serverTimestamp(),
+                            profile_picture: ''
+                        });
+                        
+                        successCount++;
+                    } catch (error) {
+                        console.error("Gagal import user: " + userData.email, error);
+                        failCount++;
+                    }
+                }
+
+                // Hapus secondary app instance setelah selesai untuk membersihkan resource
+                secondaryApp.delete();
+
+                resultDiv.innerHTML = `
+                    <div class="alert alert-${failCount > 0 ? 'warning' : 'success'}">
+                        <strong>Proses Selesai!</strong><br>
+                        Berhasil ditambahkan: ${successCount} user.<br>
+                        Gagal: ${failCount} user (Cek console untuk detail atau email duplikat).
+                    </div>
+                `;
+                fileInput.value = ''; // Reset input file
+            };
+            
+            // Baca file sebagai teks
+            reader.readAsText(file);
+        }
+
         window.importGuru = function() {
-            alert('Fitur akan segera tersedia!');
+            processImport('import-guru', 'guru', (cols) => ({
+                nip: cols[0]?.trim() || '',
+                full_name: cols[1]?.trim() || 'Tanpa Nama',
+                username: cols[1]?.trim() || 'user',
+                email: cols[2]?.trim() || '',
+                phone_number: cols[3]?.trim() || '',
+                subject: cols[4]?.trim() || ''
+            }));
         };
-        
+
         window.importSiswa = function() {
-            alert('Fitur akan segera tersedia!');
+            processImport('import-siswa', 'siswa', (cols) => ({
+                nis: cols[0]?.trim() || '',
+                full_name: cols[1]?.trim() || 'Tanpa Nama',
+                username: cols[1]?.trim() || 'user',
+                email: cols[2]?.trim() || '',
+                class_id: cols[3]?.trim() || '',
+                phone_number: cols[4]?.trim() || ''
+            }));
         };
+
+        // Placeholder functions for other features
+        window.loadDashboardData = async function() { console.log('Loading dashboard data...'); };
+        window.loadAnnouncements = async function() { console.log('Loading announcements...'); };
+        window.loadAllUsers = async function() { console.log('Loading users...'); };
+        window.showNewAnnouncementModal = function() { alert('Fitur akan segera tersedia!'); };
+        window.closeModal = function() { alert('Fitur akan segera tersedia!'); };
+        window.createAnnouncement = function() { alert('Fitur akan segera tersedia!'); };
+        window.showUserType = function() { alert('Fitur akan segera tersedia!'); };
 
     </script>
 </body>
